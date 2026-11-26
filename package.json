@@ -1,0 +1,11 @@
+{
+  "name": "matbakh",
+  "version": "1.0.0",
+  "description": "Free white-label QR menu, kitchen screen and WhatsApp ordering for restaurants and cafes. Static, no server.",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/core.test.js",
+    "test:e2e": "node tests/e2e.js"
+  },
+  "devDependencies": { "puppeteer-core": "^24.0.0" }
+}
