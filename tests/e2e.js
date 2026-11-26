@@ -138,7 +138,7 @@ function ok(cond, name) { if (cond) { passed++; console.log('  ok   ' + name); }
   const ctx2 = await browser.createBrowserContext(); // separate storage = another phone
   const g = await newPage(ctx2);
   const tlink = link.replace('#/menu?', '#/menu?t=5&');
-  await g.goto(tlink.replace(/^https?:\/\/[^/]+\//, base)); await g.waitForSelector('.item', { timeout: 5000 }); await sleep(300);
+  await g.goto(tlink.startsWith(base) ? tlink : base + tlink.slice(tlink.indexOf('#'))); await g.waitForSelector('.item', { timeout: 5000 }); await sleep(300);
   ok(/^(ar)$/.test(await g.evaluate(() => document.documentElement.lang)), 'guest opens in the restaurant default language (Arabic)');
   await clickText(g, '.langchip', 'English');
   ok((await count(g, '.nav')) === 0, 'guest sees no staff navigation');
