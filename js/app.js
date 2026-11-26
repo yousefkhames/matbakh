@@ -202,6 +202,27 @@
       });
     } catch (e) { /* audio blocked */ }
   }
+  /* live orders from customers' phones through ntfy.sh (optional, owner device only) */
+  let es = null, esTopic = '', liveOk = false;
+  function liveIngest(text) {
+    try {
+      const d = C.decodeOrder(text);
+      if (d.origin && S.orders.some((o) => o.origin === d.origin)) return;
+      const o = Object.assign(d, { id: C.uid('o'), no: 0, status: 'new', updatedAt: Date.now() });
+      addOwnerOrder(o); beep(); toast(t('liveReceived')); applyChrome(); render(true);
+    } catch (e) { /* not an order */ }
+  }
+  function liveSync() {
+    const topic = guest ? '' : (S.brand.liveTopic || '');
+    if (topic === esTopic) return;
+    if (es) { es.close(); es = null; }
+    esTopic = topic; liveOk = false;
+    if (!topic || typeof EventSource === 'undefined') return;
+    es = new EventSource(C.liveUrl(topic, '/sse?since=12h'));
+    es.onopen = () => { liveOk = true; };
+    es.onerror = () => { liveOk = false; };
+    es.onmessage = (m) => { try { const d = JSON.parse(m.data); if (d.event === 'message' && d.message) liveIngest(d.message); } catch (e) { /* ignore */ } };
+  }
   window.addEventListener('storage', (e) => {
     if (guest || e.key !== KEY) return;
     const before = S.orders.filter((o) => o.status === 'new').length;
@@ -322,6 +343,21 @@
     const form2 = () => ({ type: f.type, table: C.str(f.table, 6), name: C.str(f.name, 40), phone: C.str(f.phone, 20), note: C.str(f.note, 200) });
     const actions = h('div', { class: 'actions' });
     if (guest) {
+      if (brand().liveTopic) actions.append(btn('♨ ' + t('sendLive'), async (ev) => {
+        const e = validate(); if (e) { err.textContent = e; return; }
+        const o = buildOrder(form2()); o.no = 0; o.createdAt = Date.now();
+        const text = C.orderText(o, brand(), lang(), brand().arabicDigits);
+        const num = C.normalizePhone(brand().whatsapp, brand().countryCode);
+        err.textContent = ''; ev.currentTarget.disabled = true;
+        try {
+          const code = C.encodeOrder(o);
+          if (code.length > 3800) throw new Error('too big');
+          const r = await fetch(C.liveUrl(brand().liveTopic), { method: 'POST', body: code });
+          if (!r.ok) throw new Error('http ' + r.status);
+        } catch (x) { err.textContent = t('liveFailed'); ev.currentTarget.disabled = false; return; }
+        lastOrder = { order: o, text, wa: num ? C.waLink(num, text) : '', live: true };
+        cart = []; saveCart(); go('done');
+      }, 'primary wide'));
       actions.append(btn('💬 ' + t('sendWhatsApp'), () => {
         const e = validate(); if (e) { err.textContent = e; return; }
         const num = C.normalizePhone(brand().whatsapp, brand().countryCode);
@@ -348,15 +384,16 @@
     const wrap = h('div', { class: 'done' });
     if (!lastOrder) { go('menu'); return wrap; }
     const o = lastOrder.order;
-    wrap.append(h('div', { class: 'stamp' }, '✓'), h('h1', null, guest ? t('orderSent') : t('orderSavedKitchen')));
+    wrap.append(h('div', { class: 'stamp' }, '✓'), h('h1', null, guest ? (lastOrder.live ? t('liveSent') : t('orderSent')) : t('orderSavedKitchen')));
     if (!guest) wrap.append(h('p', { class: 'bigno' }, t('orderNo') + ' #' + nf(o.no)));
-    wrap.append(h('p', { class: 'muted' }, guest ? t('waOpened') : (o.type === 'table' ? t('table') + ' ' + nf(o.table) : t('pickup') + ' · ' + nf(brand().pickupMinutes) + ' ' + t('min'))));
+    wrap.append(h('p', { class: 'muted' }, guest ? (lastOrder.live ? t('liveNote') : t('waOpened')) : (o.type === 'table' ? t('table') + ' ' + nf(o.table) : t('pickup') + ' · ' + nf(brand().pickupMinutes) + ' ' + t('min'))));
     wrap.append(h('div', { class: 'receipt-mini' }, o.lines.map((l) => h('div', null, h('span', null, nf(l.qty) + ' × ' + C.lineName(l, lang())), h('span', null, money(l.price * l.qty)))), h('div', { class: 'grand' }, h('span', null, t('total')), h('span', null, money(o.totals.total)))));
     const acts = h('div', { class: 'actions' });
     if (guest) {
-      acts.append(btn('💬 ' + t('sendWhatsApp'), () => window.open(lastOrder.wa, '_blank', 'noopener'), 'primary'),
+      if (lastOrder.wa) acts.append(btn('💬 ' + t('sendWhatsApp'), () => window.open(lastOrder.wa, '_blank', 'noopener'), lastOrder.live ? 'ghost' : 'primary'));
+      acts.append(
         btn(t('copyText'), () => { (navigator.clipboard ? navigator.clipboard.writeText(lastOrder.text) : Promise.reject()).then(() => toast(t('copied')), () => toast(lastOrder.text)); }, 'ghost'));
-      wrap.append(h('pre', { class: 'wa-text' }, lastOrder.text));
+      if (!lastOrder.live) wrap.append(h('pre', { class: 'wa-text' }, lastOrder.text));
     } else {
       const ph = C.normalizePhone(o.phone, brand().countryCode);
       if (ph) acts.append(btn('💬 ' + t('whatsappCustomer'), () => window.open(C.waLink(ph, C.confirmText(o, brand(), lang())), '_blank', 'noopener'), 'ghost'));
@@ -418,6 +455,7 @@
       h('h2', null, t(k), h('b', null, nf(by(st).length))),
       by(st).length ? by(st).map(ticket) : h('p', { class: 'k-none' }, t('none'))))));
     wrap.append(h('p', { class: 'hint' }, t('sync')));
+    if (S.brand.liveTopic) wrap.append(h('p', { class: 'hint', 'data-live': liveOk ? 'on' : 'down' }, (liveOk ? '● ' + t('liveStatusOn') : '○ ' + t('liveStatusDown'))));
     return wrap;
   }
 
@@ -618,6 +656,10 @@
         fld(t('whatsapp'), h('input', { inputmode: 'tel', value: b.whatsapp, placeholder: '01012345678', maxlength: 20, onchange: (e) => { b.whatsapp = C.str(e.target.value, 20); live(); } })),
         fld(t('countryCode'), h('input', { inputmode: 'numeric', value: b.countryCode, maxlength: 5, onchange: (e) => { b.countryCode = C.str(e.target.value, 5).replace(/\D/g, '') || '20'; live(); } }))),
       fld(t('pickupMinutes'), h('input', { inputmode: 'numeric', value: b.pickupMinutes, onchange: (e) => { b.pickupMinutes = Math.round(C.num(e.target.value, 0, 240, 20)); live(); } }))));
+    pane.append(h('div', { class: 'livebox' }, h('h3', null, t('liveTitle')),
+      h('label', { class: 'chk' }, h('input', { type: 'checkbox', checked: !!b.liveTopic, onchange: (e) => { b.liveTopic = e.target.checked ? C.newTopic() : ''; live(); liveSync(); render(true); } }), t('liveOn')),
+      h('p', { class: 'hint' }, t('liveHelp')),
+      b.liveTopic ? h('p', { class: 'hint' }, t('liveShareAgain')) : null));
   }
 
   function studioData(pane) {
@@ -677,5 +719,6 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const d = document.querySelector('dialog[open]'); if (d) d.querySelector('.x').click(); } });
   window.__mb = { get state() { return S; }, get guest() { return guest; } }; // read-only debug handle used by the browser tests
   onRoute();
+  liveSync();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 })();

@@ -15,7 +15,9 @@ A small restaurant, cafe or bakery gets three things from one web page:
 
 1. **A QR table menu.** Print a QR code per table. Customers scan it and see your menu, in your colors, with your logo, in Arabic or English. The menu travels inside the link, so no server is needed.
 2. **A kitchen screen.** Orders show up as paper-style tickets in three columns: New, Preparing, Ready. Timers turn amber and red when an order waits too long. A bell rings on new orders.
-3. **Pickup and WhatsApp orders.** A customer builds an order and taps one button. WhatsApp opens with the full order already written, addressed to your number. Paste that message into the kitchen screen and it becomes a ticket.
+3. **Live orders, pickup and WhatsApp orders.** With **Live orders** switched on in Studio, a customer who opens your shared menu link sends the order straight to the kitchen screen. WhatsApp stays as the backup.
+
+   Without it: A customer builds an order and taps one button. WhatsApp opens with the full order already written, addressed to your number. Paste that message into the kitchen screen and it becomes a ticket.
 
 It is also **white-label**. Change the name, logo, colors, currency, language, tax, service charge and the whole menu in the Studio screen, then export it all as a JSON file and load it on another device. One codebase, many restaurants.
 
@@ -26,6 +28,7 @@ It is also **white-label**. Change the name, logo, colors, currency, language, t
 - Order numbers that restart each day
 - Kitchen board: New / Preparing / Ready, age timers, undo, cancel, sound, fullscreen, one-tap WhatsApp "your order is ready" to the customer
 - Live sync between tabs of the same browser (open the kitchen on a tablet, take orders on the counter)
+- **Live customer orders** (optional): a customer's phone sends the order to your open kitchen screen in a second or two, through the free ntfy.sh relay and a private random topic. Orders sent while the kitchen was closed arrive when you open it (kept 12 hours). Duplicates are ignored.
 - Import a WhatsApp order message into the kitchen (duplicates are ignored)
 - Orders page: today / all, sales, average order, top items, CSV export, printable receipts
 - Studio: menu editor, tables and QR sheet (printable), brand editor, export/import, three starter templates (Egyptian cafe, fast food, bakery)
@@ -58,6 +61,7 @@ Plain HTML, CSS and JavaScript. No framework, no build step, no backend.
 ```bash
 npm test            # 15 unit tests (Node 18+)
 npm i && npm run test:e2e   # real-browser click-through (needs Chrome; set CHROME=/path if not /usr/bin/google-chrome)
+npm run test:live           # owner + customer phone + kitchen through the real ntfy.sh relay (needs internet)
 ```
 
 The end-to-end test starts a local server, drives Chrome through the owner flow, a separate "customer phone" profile opening a shared link, WhatsApp import, cross-tab sync, export/import and error cases, and fails on any console error. It can also run against the live site: `node tests/e2e.js https://yousefkhames.github.io/matbakh/`.
@@ -65,7 +69,7 @@ The end-to-end test starts a local server, drives Chrome through the owner flow,
 ## Honest limits
 
 - **No server means no shared database.** Your menu and orders live in the browser of the device you use. Clear the browser data and they are gone, so export a backup from Studio > Data now and then.
-- **A customer's phone cannot write into your kitchen screen.** Customer orders reach you through WhatsApp. You paste the message into the kitchen screen to turn it into a ticket. Orders typed on the kitchen device itself, and tabs of the same browser, sync live.
+- **Live orders depend on a third-party relay.** They use the free public ntfy.sh service. The order (name, phone, items) passes through it under a random 18-character topic that only your shared links contain. Anyone who has your link can send you orders, so keep it to your own QR codes and rotate it by switching Live orders off and on. The kitchen page must be open to receive; if ntfy.sh is down, customers see a clear error and can use WhatsApp. Without Live orders on, customers' phones cannot write into your kitchen screen and orders reach you through WhatsApp.
 - **WhatsApp is a link, not an API.** The app opens `wa.me` with the text filled in. The customer still has to press send. There is no delivery or read confirmation.
 - **Shared menu links hold the whole menu.** The QR code gets denser as the menu grows. The demo menu (18 items) gives a link of about 1,900 characters. Around 40 items with long descriptions is the practical ceiling for one scannable QR code. The uploaded logo image is not included in shared links (the emoji or name is shown instead).
 - **No online payments, no stock counting, no staff accounts or permissions.** Anyone with the owner device can open the Studio.

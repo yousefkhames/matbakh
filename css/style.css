@@ -279,3 +279,4 @@ body:has(.kitchen) .tab.on { color: var(--at); background: var(--a); }
 @media (max-width: 420px) { .two { grid-template-columns: 1fr; } .hero h1 { font-size: 25px; } .arch { width: 80px; height: 100px; } .logo.lg { width: 62px; height: 62px; font-size: 38px; } .tpls { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 .menu { padding-bottom: 72px; }
+.livebox{margin-top:20px;padding-top:14px;border-top:2px dashed currentColor;border-color:rgba(0,0,0,.25)}.livebox h3{margin:0 0 8px}

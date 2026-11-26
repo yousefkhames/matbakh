@@ -32,6 +32,8 @@
       confirmTemplate: 'Replace your current menu and branding with this template? Orders are kept.', resetAll: 'Erase everything', confirmReset: 'Erase menu, branding and all orders on this device?', importOk: 'Imported', importBad: 'That file is not a valid Matbakh export.',
       dataNote: 'Everything is stored only in this browser. Export a backup now and then.', how1: 'Shared menu links carry your menu inside the link, so customers see it without any server.',
       customerTotal: 'Customer total', printed: 'Receipt', thanks: 'Thank you!', powered: 'Made with Matbakh', cartCleared: 'Cart cleared', clear: 'Clear',
+      liveTitle: 'Live orders', liveOn: 'Receive customer orders live (uses the free ntfy.sh relay)', liveHelp: 'When on, a customer who opens your shared menu link can send the order straight to this kitchen screen while it is open. The order passes through ntfy.sh under a private random topic that only your shared links contain. Turn it off if you prefer WhatsApp only. Keep the kitchen page open to receive orders; orders sent while it was closed arrive when you reopen it (kept 12 hours).', liveShareAgain: 'Copy the menu link again after changing this: older links do not carry the live setting.',
+      sendLive: 'Send to kitchen now', liveSent: 'Your order reached the kitchen screen', liveFailed: 'Could not reach the kitchen right now. Send it on WhatsApp instead.', liveNote: 'Sent live. You can also send it on WhatsApp as a backup.', liveStatusOn: 'Live orders on', liveStatusDown: 'Live orders reconnecting', liveReceived: 'New live order',
       sync: 'Open Kitchen on a second tab or tablet on this device and it updates live. Other devices get orders through WhatsApp import.', min2: 'min',
     },
     ar: {
@@ -64,6 +66,8 @@
       confirmTemplate: 'تستبدل المنيو والهوية الحاليين بالقالب ده؟ الطلبات هتفضل.', resetAll: 'مسح كل حاجة', confirmReset: 'تمسح المنيو والهوية وكل الطلبات على الجهاز ده؟', importOk: 'تم الاستيراد', importBad: 'الملف ده مش تصدير صالح من مطبخ.',
       dataNote: 'كل حاجة بتتخزن في المتصفح ده بس. اعمل نسخة احتياطية من وقت للتاني.', how1: 'لينكات المنيو بتشيل المنيو جواها، فالعميل يشوفه من غير أي سيرفر.',
       customerTotal: 'إجمالي العميل', printed: 'إيصال', thanks: 'شكراً ليكم!', powered: 'صُنع بمطبخ', cartCleared: 'اتمسح الطلب', clear: 'مسح',
+      liveTitle: 'طلبات مباشرة', liveOn: 'استقبل طلبات العملاء مباشرة (عن طريق ntfy.sh المجاني)', liveHelp: 'لما تفعّلها، العميل اللي يفتح لينك المنيو يقدر يبعت الطلب لشاشة المطبخ دي على طول وهي مفتوحة. الطلب بيعدي على ntfy.sh تحت اسم قناة عشوائي سري موجود في لينكات المنيو بس. اقفلها لو عايز واتساب بس. سيب صفحة المطبخ مفتوحة عشان توصلك الطلبات، والطلبات اللي اتبعتت وهي مقفولة بتوصل لما تفتحها (بتتحفظ 12 ساعة).', liveShareAgain: 'انسخ لينك المنيو تاني بعد التغيير: اللينكات القديمة مش فيها إعداد الطلبات المباشرة.',
+      sendLive: 'ابعت للمطبخ دلوقتي', liveSent: 'طلبك وصل شاشة المطبخ', liveFailed: 'مقدرناش نوصل للمطبخ دلوقتي. ابعت الطلب على واتساب.', liveNote: 'اتبعت مباشرة. تقدر تبعته كمان على واتساب كنسخة احتياطية.', liveStatusOn: 'الطلبات المباشرة شغالة', liveStatusDown: 'بيعيد الاتصال', liveReceived: 'طلب مباشر جديد',
       sync: 'افتح المطبخ في تاب تاني أو تابلت على نفس الجهاز وهيتحدث لحظياً. الأجهزة التانية بتبعت الطلبات عن طريق واتساب.', min2: 'د',
     },
   };

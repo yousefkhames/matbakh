@@ -64,6 +64,14 @@
     if (d.startsWith('0') && cc) return cc + d.slice(1);
     return d;
   }
+  /* ---------- live relay (ntfy.sh, optional) ---------- */
+  const LIVE_HOST = 'https://ntfy.sh/';
+  function newTopic() {
+    const a = new Uint8Array(16); (typeof crypto !== 'undefined' ? crypto : require('crypto').webcrypto).getRandomValues(a);
+    return 'mb' + Array.from(a, (x) => (x % 36).toString(36)).join('');
+  }
+  function liveUrl(topic, suffix) { return LIVE_HOST + topic + (suffix || ''); }
+
   function waLink(phone, text) {
     return 'https://wa.me/' + phone + '?text=' + encodeURIComponent(text);
   }
@@ -129,6 +137,7 @@
       taxPct: num(b.taxPct, 0, 50, 0),
       servicePct: num(b.servicePct, 0, 50, 0),
       whatsapp: str(b.whatsapp, 20),
+      liveTopic: /^[a-z0-9]{12,40}$/.test(String(b.liveTopic || '')) ? String(b.liveTopic) : '',
       countryCode: str(b.countryCode, 5).replace(/\D/g, '') || '20',
       tables: Math.round(num(b.tables, 0, 200, 8)),
       pickupMinutes: Math.round(num(b.pickupMinutes, 0, 240, 20)),
@@ -332,7 +341,7 @@
   }
 
   return {
-    STATUS, NEXT, PREV, uid, str, num, bi, fmtMoney, fmtNumber, toArabicDigits, cartTotals, normalizePhone, waLink,
+    STATUS, NEXT, PREV, uid, str, num, bi, fmtMoney, fmtNumber, toArabicDigits, cartTotals, normalizePhone, waLink, newTopic, liveUrl,
     bytesToB64url, b64urlToBytes, packText, unpackText, sanitizeBrand, sanitizeConfig, sanitizeOrder, shareConfig,
     dayKey, nextOrderNo, encodeOrder, decodeOrder, orderText, readyText, confirmText, lineName, stats, ordersCsv, csvCell,
   };
