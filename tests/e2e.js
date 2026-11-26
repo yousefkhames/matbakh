@@ -125,6 +125,15 @@ function ok(cond, name) { if (cond) { passed++; console.log('  ok   ' + name); }
   ok(/#\/menu\?d=z/.test(link), 'share link carries compressed menu payload');
   ok(link.length < 2500, 'share link small enough for a scannable QR (' + link.length + ' chars)');
 
+  // decode the rendered QR image and compare with the link
+  try {
+    const jsQR = require(process.env.JSQR_PATH || 'jsqr'), { PNG } = require(process.env.PNGJS_PATH || 'pngjs');
+    await a.setViewport({ width: 390, height: 844, deviceScaleFactor: 4 }); const el = await a.$('.qrcard .qrsvg'); const buf = await el.screenshot({ type: 'png' }); const png = PNG.sync.read(buf);
+    await a.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 });
+    const r = jsQR(new Uint8ClampedArray(png.data), png.width, png.height);
+    ok(!!r && r.data === link, 'printed QR code decodes back to the exact share link');
+  } catch (e) { console.log('  skip QR decode (install jsqr + pngjs to enable): ' + e.code); }
+
   console.log('Guest (customer phone) flow');
   const ctx2 = await browser.createBrowserContext(); // separate storage = another phone
   const g = await newPage(ctx2);

@@ -30,7 +30,7 @@ It is also **white-label**. Change the name, logo, colors, currency, language, t
 - Orders page: today / all, sales, average order, top items, CSV export, printable receipts
 - Studio: menu editor, tables and QR sheet (printable), brand editor, export/import, three starter templates (Egyptian cafe, fast food, bakery)
 - Arabic and English with full RTL layout, optional Arabic-Indic digits
-- Works offline after the first visit (network-first service worker)
+- Installable web app with a network-first service worker so it keeps opening on a flaky connection
 - Keyboard and screen-reader friendly controls, reduced-motion support
 
 <p align="center"><img src="docs/screenshots/kitchen-desktop.png" width="720" alt="Kitchen screen on desktop"></p>
@@ -70,7 +70,7 @@ The end-to-end test starts a local server, drives Chrome through the owner flow,
 - **Shared menu links hold the whole menu.** The QR code gets denser as the menu grows. The demo menu (18 items) gives a link of about 1,900 characters. Around 40 items with long descriptions is the practical ceiling for one scannable QR code. The uploaded logo image is not included in shared links (the emoji or name is shown instead).
 - **No online payments, no stock counting, no staff accounts or permissions.** Anyone with the owner device can open the Studio.
 - Item pictures are emoji, not photos, to keep links small.
-- Tested in Chrome. Needs a browser with `CompressionStream` (Chrome/Edge 80+, Safari 16.4+, Firefox 113+) to open shared links.
+- Tested in Chrome only. Opening shared links needs a modern browser with `CompressionStream` and `DecompressionStream`.
 
 ## License
 
