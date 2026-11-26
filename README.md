@@ -9,6 +9,15 @@ Arabic and English, right-to-left ready, mobile first. No server, no sign-up, no
 
 <p align="center"><img src="docs/screenshots/menu-ar.png" width="230" alt="Arabic menu on a phone"> <img src="docs/screenshots/kitchen-mobile.png" width="230" alt="Kitchen screen with order tickets"> <img src="docs/screenshots/cart-en.png" width="230" alt="Checkout screen"></p>
 
+## Screenshots
+
+Captured from the live site (https://yousefkhames.github.io/matbakh/).
+
+<p>
+  <img src="docs/screenshots/live-desktop.png" alt="matbakh desktop view" width="640">
+  <img src="docs/screenshots/live-mobile.png" alt="matbakh mobile view" width="200">
+</p>
+
 ## The pitch
 
 A small restaurant, cafe or bakery gets three things from one web page:
