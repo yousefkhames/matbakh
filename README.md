@@ -1,3 +1,21 @@
+<div align="center">
+
+<img src="assets/yk-logo.svg" width="64" alt="YK">
+
+# matbakh
+
+**matbakh** · demo / portfolio project
+
+**منيو QR وشاشة مطبخ** · مشروع تجريبي للعرض
+
+[Live demo](https://yousefkhames.github.io/matbakh/) · By Yousef Khames · من تطوير يوسف خميس
+
+<img src="assets/og.png" width="640" alt="matbakh preview">
+
+</div>
+
+---
+
 # matbakh · مطبخ
 
 A white-label QR table menu for cafes and restaurants: guests scan a table QR, build an order from the menu and open a WhatsApp draft; staff paste the order into a kitchen screen and move it from new to preparing, ready and served. Arabic RTL and English LTR. Static HTML, CSS and JavaScript; no build, account, API or payment processor.
