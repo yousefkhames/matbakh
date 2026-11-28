@@ -1,12 +1,13 @@
 {
   "name": "matbakh",
   "version": "1.0.0",
-  "description": "Free white-label QR menu, kitchen screen and WhatsApp ordering for restaurants and cafes. Static, no server.",
+  "description": "White-label QR table menu, WhatsApp order drafts and kitchen screen. Static, client-side, Arabic and English.",
   "license": "MIT",
+  "private": true,
   "scripts": {
-    "test": "node --test tests/core.test.js",
-    "test:e2e": "node tests/e2e.js",
-    "test:live": "node tests/live.js"
-  },
-  "devDependencies": { "puppeteer-core": "^24.0.0", "jsqr": "^1.4.0", "pngjs": "^7.0.0" }
+    "test": "node --test tests/core.test.js tests/review.test.js && node tests/e2e.test.js",
+    "test:unit": "node --test tests/core.test.js tests/review.test.js",
+    "test:e2e": "node tests/e2e.test.js",
+    "serve": "node -e \"require('./tests/cdp.js').serve(8080).then(()=>console.log('http://localhost:8080'))\""
+  }
 }

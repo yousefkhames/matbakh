@@ -1,90 +1,55 @@
-<p align="center"><img src="logo.svg" width="120" alt="Matbakh logo"></p>
+# matbakh · مطبخ
 
-<h1 align="center">Matbakh | مطبخ</h1>
+A white-label QR table menu for cafes and restaurants: guests scan a table QR, build an order from the menu and open a WhatsApp draft; staff paste the order into a kitchen screen and move it from new to preparing, ready and served. Arabic RTL and English LTR. Static HTML, CSS and JavaScript; no build, account, API or payment processor.
 
-<p align="center"><b>A free, white-label QR menu, kitchen screen and WhatsApp ordering system for restaurants and cafes.</b><br>
-Arabic and English, right-to-left ready, mobile first. No server, no sign-up, no monthly fee.</p>
+<div lang="ar" dir="rtl">قائمة طعام بكود QR لكل طاولة. الضيف يجهّز طلبه ويفتح مسودة في واتساب، ثم يرسلها بنفسه. شاشة المطبخ تستورد الطلب من كوده. لا يوجد دفع داخل الأداة.</div>
 
-<p align="center"><a href="https://yousefkhames.github.io/matbakh/"><b>Live demo → yousefkhames.github.io/matbakh</b></a></p>
+<img src="assets/yk-logo.svg" width="24" height="24" alt=""> **By Yousef Khames · من تطوير يوسف خميس**
 
-<p align="center"><img src="docs/screenshots/menu-ar.png" width="230" alt="Arabic menu on a phone"> <img src="docs/screenshots/kitchen-mobile.png" width="230" alt="Kitchen screen with order tickets"> <img src="docs/screenshots/cart-en.png" width="230" alt="Checkout screen"></p>
+## Preview locally
 
-## Screenshots
+```sh
+python3 -m http.server 8080 --bind 127.0.0.1
+```
 
-Captured from the live site (https://yousefkhames.github.io/matbakh/) with sample demo content entered for the screenshot. It is not real user data.
+Open `http://localhost:8080/#/t/5` (table 5), `#/kitchen` and `#/tables`. Everything in the sample is **demo content**: fictional items, fictional prices, orders tagged Demo. Screenshots in `docs/` use that demo data only.
 
-<p>
-  <img src="docs/screenshots/live-desktop.png" alt="matbakh desktop view" width="640">
-  <img src="docs/screenshots/live-mobile.png" alt="matbakh mobile view" width="200">
-</p>
+## Set up a venue
 
-## The pitch
+1. Build the menu with the **menyu** kit builder (same menu schema), export `menu-data.js` and replace the file here. Or edit `menu-data.js` by hand.
+2. Edit `config.js`: `whatsapp` (the public venue number), `tables` (number of QR cards), and set `demo: false` when the real menu and number are in. With no number the guest gets a **Copy order** button instead of a WhatsApp link.
+3. Publish, open **Table cards**, paste the published link, test-scan with a phone, then print.
+4. Theme: edit `assets/kit-theme.js` (`name`, `logo`, `accent`, `mode`, `light`, `dark`). Keep `assets/yk-logo.svg` and `assets/favicon.svg`.
 
-A small restaurant, cafe or bakery gets three things from one web page:
+## How an order travels
 
-1. **A QR table menu.** Print a QR code per table. Customers scan it and see your menu, in your colors, with your logo, in Arabic or English. The menu travels inside the link, so no server is needed.
-2. **A kitchen screen.** Orders show up as paper-style tickets in three columns: New, Preparing, Ready. Timers turn amber and red when an order waits too long. A bell rings on new orders.
-3. **Live orders, pickup and WhatsApp orders.** With **Live orders** switched on in Studio, a customer who opens your shared menu link sends the order straight to the kitchen screen. WhatsApp stays as the backup.
+1. Guest scans table QR (`#/t/<n>`), adds items, taps **Prepare order in WhatsApp**. The message contains the items, table, menu total and an **order code** (`MB1.…`) that carries the cart.
+2. WhatsApp opens a draft. **The guest must press send.** Opening a draft is not sending, and the order is not confirmed until the venue replies.
+3. Staff copy the message from WhatsApp, paste it into **Kitchen screen** and import. The same order id imports only once. Item names come from this device's copy of the menu.
+4. Tickets move through new → preparing → ready → served, with minutes since import shown from recorded timestamps.
 
-   Without it: A customer builds an order and taps one button. WhatsApp opens with the full order already written, addressed to your number. Paste that message into the kitchen screen and it becomes a ticket.
+## Deploy (GitHub Pages)
 
-It is also **white-label**. Change the name, logo, colors, currency, language, tax, service charge and the whole menu in the Studio screen, then export it all as a JSON file and load it on another device. One codebase, many restaurants.
-
-## Features
-
-- Menu with categories, search, popular strip, sold-out switch, item emoji, bilingual names and descriptions
-- Cart with per-item notes, table or pickup mode, name/phone validation, tax and service charge
-- Order numbers that restart each day
-- Kitchen board: New / Preparing / Ready, age timers, undo, cancel, sound, fullscreen, one-tap WhatsApp "your order is ready" to the customer
-- Live sync between tabs of the same browser (open the kitchen on a tablet, take orders on the counter)
-- **Live customer orders** (optional): a customer's phone sends the order to your open kitchen screen in a second or two, through the free ntfy.sh relay and a private random topic. Orders sent while the kitchen was closed arrive when you open it (kept 12 hours). Duplicates are ignored.
-- Import a WhatsApp order message into the kitchen (duplicates are ignored)
-- Orders page: today / all, sales, average order, top items, CSV export, printable receipts
-- Studio: menu editor, tables and QR sheet (printable), brand editor, export/import, three starter templates (Egyptian cafe, fast food, bakery)
-- Arabic and English with full RTL layout, optional Arabic-Indic digits
-- Installable web app with a network-first service worker so it keeps opening on a flaky connection
-- Keyboard and screen-reader friendly controls, reduced-motion support
-
-<p align="center"><img src="docs/screenshots/kitchen-desktop.png" width="720" alt="Kitchen screen on desktop"></p>
-<p align="center"><img src="docs/screenshots/studio-brand.png" width="230" alt="Brand editor"> <img src="docs/screenshots/qr-sheet.png" width="230" alt="Printable QR sheet"> <img src="docs/screenshots/orders-desktop.png" width="400" alt="Orders and stats"></p>
-
-## How to use it
-
-1. Open the [live app](https://yousefkhames.github.io/matbakh/) and go to **Studio**.
-2. **Brand**: set the name, logo, colors, currency and your WhatsApp number (for example `01012345678`).
-3. **Menu**: edit categories and items, or start from a template under **Data**.
-4. **Tables & QR**: set the number of tables and print the QR sheet.
-5. Keep **Kitchen** open on a tablet. Orders typed at the counter appear instantly. Orders that arrive on WhatsApp are pasted with **Import WhatsApp order**.
-
-## Tech
-
-Plain HTML, CSS and JavaScript. No framework, no build step, no backend.
-
-- `js/core.js`: pure logic (money, totals, order codes, sanitizing, compression), unit tested in Node
-- `js/app.js`: the UI, rendered with DOM calls and `textContent` (no `innerHTML` for user data)
-- `localStorage` for data, `CompressionStream` for shareable menu links
-- [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT) for QR codes, vendored in `vendor/`
+Create `yousefkhames/matbakh`, commit these files to `main`, Settings → Pages → Deploy from a branch → `main` / root. Live at `https://yousefkhames.github.io/matbakh/`. All paths are relative.
 
 ## Tests
 
-```bash
-npm test            # 15 unit tests (Node 18+)
-npm i && npm run test:e2e   # real-browser click-through (needs Chrome; set CHROME=/path if not /usr/bin/google-chrome)
-npm run test:live           # owner + customer phone + kitchen through the real ntfy.sh relay (needs internet)
+```sh
+npm run test:unit   # Node 22+, no install
+npm run test:e2e    # headless Chrome as google-chrome
+npm test
 ```
 
-The end-to-end test starts a local server, drives Chrome through the owner flow, a separate "customer phone" profile opening a shared link, WhatsApp import, cross-tab sync, export/import and error cases, and fails on any console error. It can also run against the live site: `node tests/e2e.js https://yousefkhames.github.io/matbakh/`.
+## Honest limits and privacy
 
-## Honest limits
-
-- **No server means no shared database.** Your menu and orders live in the browser of the device you use. Clear the browser data and they are gone, so export a backup from Studio > Data now and then.
-- **Live orders depend on a third-party relay.** They use the free public ntfy.sh service. The order (name, phone, items) passes through it under a random 18-character topic that only your shared links contain. Anyone who has your link can send you orders, so keep it to your own QR codes and rotate it by switching Live orders off and on. The kitchen page must be open to receive; if ntfy.sh is down, customers see a clear error and can use WhatsApp. Without Live orders on, customers' phones cannot write into your kitchen screen and orders reach you through WhatsApp.
-- **WhatsApp is a link, not an API.** The app opens `wa.me` with the text filled in. The customer still has to press send. There is no delivery or read confirmation.
-- **Shared menu links hold the whole menu.** The QR code gets denser as the menu grows. The demo menu (18 items) gives a link of about 1,900 characters. Around 40 items with long descriptions is the practical ceiling for one scannable QR code. The uploaded logo image is not included in shared links (the emoji or name is shown instead).
-- **No online payments, no stock counting, no staff accounts or permissions.** Anyone with the owner device can open the Studio.
-- Item pictures are emoji, not photos, to keep links small.
-- Tested in Chrome only. Opening shared links needs a modern browser with `CompressionStream` and `DecompressionStream`.
+- No server: orders do not arrive automatically. Someone must paste each order into the kitchen screen. This is a hand-off aid, not an order-management system.
+- The kitchen board lives in one browser; it does not sync between screens and is erased if site data is cleared.
+- Elapsed minutes count from the moment of import, not from when the guest ordered, and use the device clock.
+- Prices shown are the menu prices on the guest device; the venue confirms the final amount. There is no payment, tip or tax handling.
+- An order code can be edited by anyone who knows the format; staff should treat orders like any WhatsApp message and check item names.
+- The app stores no customer name or phone number. The WhatsApp message goes through the guest's own WhatsApp account.
+- Contrast of the default theme is checked; no blanket WCAG claim. Not tested on a real kitchen display.
 
 ## License
 
-MIT, see [LICENSE](LICENSE). QR code generation by Kazuhiko Arase, MIT.
+MIT, copyright Yousef Khames. See `LICENSE`. Cairo font: SIL OFL. `assets/qrcode.js`: qrcode-generator by Kazuhiko Arase (MIT, `assets/qrcode.LICENSE.txt`).

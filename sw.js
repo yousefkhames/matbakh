@@ -1,8 +1,17 @@
-/* network-first cache so the app keeps opening offline (e.g. kitchen tablet on bad wifi) */
 const CACHE = 'matbakh-v1';
-self.addEventListener('install', (e) => { self.skipWaiting(); });
-self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
+const FILES = ['./','index.html','manifest.webmanifest','base.css','kit-base.js','fonts/fonts.css','fonts/Cairo-arabic.woff2','fonts/Cairo-latin.woff2','assets/kit-theme.js','assets/qrcode.js','assets/yk-logo.svg','assets/favicon.svg','menu-data.js','config.js','menu-core.js','core.js','i18n.js','app.js','styles.css'];
+self.addEventListener('install', (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting())); });
+self.addEventListener('activate', (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => /^matbakh-v\d+$/.test(k) && k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== location.origin) return;
-  e.respondWith(fetch(e.request).then((r) => { const c = r.clone(); caches.open(CACHE).then((x) => x.put(e.request, c)); return r; }).catch(() => caches.match(e.request)));
+  const url = new URL(e.request.url);
+  if (!FILES.some((file) => new URL(file, self.registration.scope).pathname === url.pathname)) return;
+  const request = new Request(url.origin + url.pathname);
+  e.respondWith((async () => {
+    try {
+      const response = await fetch(e.request);
+      if (response.ok) { try { await (await caches.open(CACHE)).put(request, response.clone()); } catch { /* cache unavailable */ } return response; }
+      return response.status >= 500 ? (await (await caches.open(CACHE)).match(request)) || response : response;
+    } catch { return (await (await caches.open(CACHE)).match(request)) || new Response('Offline', { status: 503 }); }
+  })());
 });

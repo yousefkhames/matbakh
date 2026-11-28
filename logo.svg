@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Matbakh">
-  <rect width="256" height="256" rx="56" fill="#0f5c55"/>
-  <path d="M52 232V120a76 76 0 0 1 152 0v112z" fill="#fbf5e6"/>
-  <path d="M68 232V122a60 60 0 0 1 120 0v110z" fill="#0f5c55"/>
-  <path d="M84 168h88v14a30 30 0 0 1-30 30h-28a30 30 0 0 1-30-30z" fill="#e9a23b"/>
-  <rect x="76" y="160" width="104" height="12" rx="6" fill="#fbf5e6"/>
-  <path d="M110 140c-10-12 8-18 0-30M130 140c-10-12 8-18 0-30M150 140c-10-12 8-18 0-30" fill="none" stroke="#fbf5e6" stroke-width="7" stroke-linecap="round"/>
-</svg>

@@ -1,1 +1,1 @@
-{"name":"Matbakh","short_name":"Matbakh","start_url":"./","display":"standalone","background_color":"#fbf5e6","theme_color":"#0f5c55","icons":[{"src":"logo.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{"name":"matbakh","short_name":"matbakh","start_url":"./","scope":"./","display":"standalone","background_color":"#F8FAFC","theme_color":"#F8FAFC","icons":[{"src":"assets/favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
